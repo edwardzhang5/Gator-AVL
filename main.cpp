@@ -214,20 +214,34 @@ public:
 			bool t = true;
 			node->right = removeR(node->val, node->right, t);
 		}
+		return node;
 	}
 
 
 	void removeInorder(int n) {
-		if (n >= nodeCount) {
+		if (n >= nodeCount||n<0) {
 			cout << "unsuccessful" << endl;
 			return;
 		}
-		root = removeInorderR(root, n);
+		vector<Node*> nodeList;
+		nodeCount--;
+		int counter = 0;
+		root = removeInorderR(root, n+1, counter);
 	}
 
-	Node* removeInorderR(Node* node, int n) {
+	Node* removeInorderR(Node* node, int n, int &currCount) {
 		if (node == nullptr)
 			return node;
+		node->left = removeInorderR(node->left, n, currCount);
+		currCount++;
+		if (currCount == n) {
+			return deleteNode(node);
+		}
+		else if (currCount > n) {
+			return node;
+		}
+		node->right = removeInorderR(node->right, n, currCount);
+		return node;
 
 	}
 
@@ -342,15 +356,15 @@ int main()
 	ID.insert("test", 5);
 	ID.insert("dad", 6);
 	
-	ID.insert("Tay", 19);
-	ID.insert("Ed", 16);
-	ID.insert("die", 69);
-	ID.insert("omega", 18);
-	ID.insert("omega", 20);
-	ID.insert("omega", 40);
-	ID.insert("omega", 60);
+	ID.insert("Tay", 7);
+	ID.insert("Ed", 8);
+	ID.insert("die", 9);
+	ID.insert("omega", 10);
+	ID.insert("omega", 11);
+	ID.insert("omega", 12);
+	ID.insert("omega", 13);
 	
-	ID.remove(19);
+	ID.removeInorder(2);
 	//ID.search("lol");
 
 	ID.printLevelCount();
@@ -361,6 +375,7 @@ int main()
 	int count;
 	cin >> count;
 	string line;
+	/*
 	for (unsigned int i = 0; i < count; i++) {
 		getline(cin, line);
 		stringstream s(line);
@@ -370,6 +385,7 @@ int main()
 		}
 
 	}
+	*/
 	
 	return 0;
 }
