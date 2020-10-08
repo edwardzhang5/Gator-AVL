@@ -35,6 +35,7 @@ class AVL {
 public:
 	AVL() {
 		this->root = nullptr;
+		nodeCount = 0;
 	}
 
 	void printInorder() {
@@ -120,11 +121,12 @@ public:
 		//Adds a student object into tree with given name, ID
 		root = insertNode(root, name, val);
 		root = balance(root);
+		nodeCount++;
 	}
 	Node* insertNode(Node* root, string name, int val) {
 		if (root == nullptr) {
 			root = new Node(name, val);
-			//root->height = height(root);
+			root->height = 1;
 			return root;
 		}
 		if (val > root->val)
@@ -137,6 +139,7 @@ public:
 		}
 		root->left = balance(root->left);
 		root->right = balance(root->right);
+		root->height = height(root);
 		return root;
 	}
 
@@ -149,11 +152,85 @@ public:
 		return checkAVL(root->left) && checkAVL(root->right);
 	}
 
-
-	void remove(int val, Node* node) {
-		//Find and remove account with specified ID
+	void remove(int val) {
+		bool s = false;
+		if (nodeCount == 0) {
+			return;
+		}
+		root = removeR(val, root, s);
+		if (!s)
+			cout << "unsuccessful" << endl;
+		else
+			nodeCount--;
 
 	}
+	Node* removeR(int val, Node* node, bool &s) {
+		//Find and remove account with specified ID
+		if (node == nullptr)
+			return node;
+		else if (node->val < val) {
+			
+			node->right = removeR(val, node->right, s);
+		}
+		else if (node->val > val) {
+			node->left = removeR(val, node->left, s);
+		}
+		else {
+			s = true;
+			return deleteNode(node);
+		}
+		return node;
+
+	}
+	
+	Node* deleteNode(Node* node) {
+		if (node->left == nullptr && node->right == nullptr) {
+			//Child node
+			delete node;
+			return nullptr;
+		}
+		else if (node->left == nullptr) {
+			Node* temp = node->right;
+			delete node;
+			return temp;
+		}
+		else if (node->right == nullptr) {
+			Node* temp = node->left;
+			delete node;
+			return temp;
+		}
+		else {
+			//Two children
+	
+			//Finds in order successor, leftmost node on right side
+			Node* inOrderS = node->right;
+			while (inOrderS->left != nullptr) {
+				inOrderS = inOrderS->left;
+			}
+			//Replaces data, deletes old node
+			node->val = inOrderS->val;
+			node->name = inOrderS->name;
+			// t is a placeholder
+			bool t = true;
+			node->right = removeR(node->val, node->right, t);
+		}
+	}
+
+
+	void removeInorder(int n) {
+		if (n >= nodeCount) {
+			cout << "unsuccessful" << endl;
+			return;
+		}
+		root = removeInorderR(root, n);
+	}
+
+	Node* removeInorderR(Node* node, int n) {
+		if (node == nullptr)
+			return node;
+
+	}
+
 	void search(int val) {
 		if (!searchNode(val, root))
 			cout << "unsuccessful" << endl;
@@ -177,7 +254,7 @@ public:
 		if (IDMatch.empty())
 			cout << "unsuccessful";
 		else {
-			for (int i = 0; i < IDMatch.size(); i++) {
+			for (unsigned int i = 0; i < IDMatch.size(); i++) {
 				cout << IDMatch[i] << endl;
 			}
 		}
@@ -247,8 +324,10 @@ public:
 	void printLevelCount() {
 		cout<<height(root)<<endl;
 	}
+
 private:
 	Node* root;
+	int nodeCount;
 };
 
 int main()
@@ -257,9 +336,10 @@ int main()
 	AVL ID;
 	ID.insert("dad", 1);
 	ID.insert("ed", 2);
+	
 	ID.insert("tay", 3);
 	ID.insert("daddy", 4);
-	ID.insert("test",5)
+	ID.insert("test", 5);
 	ID.insert("dad", 6);
 	
 	ID.insert("Tay", 19);
@@ -269,19 +349,27 @@ int main()
 	ID.insert("omega", 20);
 	ID.insert("omega", 40);
 	ID.insert("omega", 60);
+	
+	ID.remove(19);
 	//ID.search("lol");
 
 	ID.printLevelCount();
 	
 	ID.printInorder();
 
-	/*
+	
 	int count;
 	cin >> count;
 	string line;
 	for (unsigned int i = 0; i < count; i++) {
-		
+		getline(cin, line);
+		stringstream s(line);
+		string word;
+		while (s >> word) {
+
+		}
+
 	}
-	*/
+	
 	return 0;
 }
