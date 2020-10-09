@@ -13,6 +13,7 @@ using namespace std;
 
 class Node {
 public:
+	// Constructors for Nodes
 	Node() {
 		val = 0;
 		name = "";
@@ -34,12 +35,14 @@ public:
 
 class AVL {
 public:
-	AVL() {
+	// Default Constructor
+	AVL() 
+	{
 		this->root = nullptr;
 		nodeCount = 0;
 	}
-
-	void printInorder() {
+	void printInorder() 
+	{
 		if (nodeCount != 0) {
 			string s = printInorderR(root);
 			cout << s.substr(2) << endl;
@@ -47,32 +50,36 @@ public:
 		else
 			cout << "unsuccessful" << endl;
 	}
-	string printInorderR(Node* node) {
-		//Stepik Code
+	string printInorderR(Node* node) 
+	{
+		// Stepik Code
+		// https://stepik.org/submissions/1480359?unit=379726
 		string temp;
 		if (node == nullptr)
 			return "";
 		temp = printInorderR(node->left) + ", " + node->name + printInorderR(node->right);
 		return temp;
 	}
-	void printPreorder() {
+	void printPreorder() 
+	{
 		string s = printPreorderR(root);
 		cout << s.substr(2) << endl;
 	}
-	string printPreorderR(Node* node) {
-		//Stepik Code
+	string printPreorderR(Node* node) 
+	{
 		string temp;
 		if (node == nullptr)
 			return "";
 		temp = ", " + node->name+ printPreorderR(node->left) +  printPreorderR(node->right);
 		return temp;
 	}
-	void printPostorder() {
+	void printPostorder() 
+	{
 		string s = printPostorderR(root);
 		cout << s.substr(2) << endl;
 	}
-	string printPostorderR(Node* node) {
-		//Stepik Code
+	string printPostorderR(Node* node) 
+	{
 		string temp;
 		if (node == nullptr)
 			return "";
@@ -81,54 +88,53 @@ public:
 	}
 
 
-	Node* balance(Node* node) {
+	Node* balance(Node* node) 
+	{
 		if (node == nullptr) {
 			return node;
 		}
 		if (node->left == nullptr && node->right == nullptr) {
-			//Don't need to balance a child node
+			// Don't need to balance a child node
 			return node;
 		}
 		if (node->left != nullptr) {
 			if (balanceFactor(node) >= 2 && balanceFactor(node->left) >= 1) {
-				//Left Left, Rotate Right
-				//cout << "Left Left" << endl;
+				// Left Left, Rotate Right
 				return rotateRight(node);
 			}
 			else if (balanceFactor(node) >= 2 && balanceFactor(node->left) <= -1) {
-				//Left Right Case, Left Right Rotation
-				//cout << "Left Right" << endl;
+				// Left Right Case, Left Right Rotation
 				return rotateLeftRight(node);
 			}
 		}
 		if (node->right != nullptr) {
 			if (balanceFactor(node) <= -2 && balanceFactor(node->right) <= -1) {
-				//Right Right Case, Rotate Left
-				//cout << "Right right" << endl;
+				// Right Right Case, Rotate Left
 				return rotateLeft(node);
 			}
 			else if (balanceFactor(node) <= -2 && balanceFactor(node->right) >= 1) {
-				//Right Left Case, Right Left Rotation
-				//cout << "Right LEft" << endl;
+				// Right Left Case, Right Left Rotation
 				return rotateRightLeft(node);
 			}
 		}
 		return node;
 
 	}
-	int balanceFactor(Node* root) {
+	int balanceFactor(Node* root) 
+	{
 		if (root == nullptr)
 			return 0;
 		return height(root->left) - height(root->right);
 	}
 
 	void insert(string name, int val) {
-		//Adds a student object into tree with given name, ID
+		// Adds a student object into tree with given name, ID
 		root = insertNode(root, name, val);
 		root = balance(root);
 		nodeCount++;
 	}
-	Node* insertNode(Node* root, string name, int val) {
+	Node* insertNode(Node* root, string name, int val) 
+	{
 		if (root == nullptr) {
 			root = new Node(name, val);
 			root->height = 1;
@@ -149,9 +155,8 @@ public:
 		return root;
 	}
 
-	
-
-	void remove(int val) {
+	void remove(int val) 
+	{
 		bool s = false;
 		if (nodeCount == 0) {
 			cout << "unsuccessful" << endl;
@@ -166,7 +171,8 @@ public:
 		}
 
 	}
-	Node* removeR(int val, Node* node, bool &s) {
+	Node* removeR(int val, Node* node, bool &s)
+	{
 		//Find and remove account with specified ID
 		if (node == nullptr)
 			return node;
@@ -186,32 +192,33 @@ public:
 
 	}
 	
-	Node* deleteNode(Node* node) {
-		//cout << "successful" << endl;
+	Node* deleteNode(Node* node) 
+	{
 		if (node->left == nullptr && node->right == nullptr) {
-			//Child node
+			// Leaf node
 			delete node;
 			return nullptr;
 		}
 		else if (node->left == nullptr) {
+			// Right node only
 			Node* temp = node->right;
 			delete node;
 			return temp;
 		}
 		else if (node->right == nullptr) {
+			// Left node only
 			Node* temp = node->left;
 			delete node;
 			return temp;
 		}
-		else {
-			//Two children
-	
-			//Finds in order successor, leftmost node on right side
+		else { 			// Two children
+
+			// Finds in order successor, leftmost node on right side
 			Node* inOrderS = node->right;
 			while (inOrderS->left != nullptr) {
 				inOrderS = inOrderS->left;
 			}
-			//Replaces data, deletes old node
+			// Replaces data, deletes old node
 			node->val = inOrderS->val;
 			node->name = inOrderS->name;
 			// t is a placeholder
@@ -222,8 +229,10 @@ public:
 	}
 
 
-	void removeInorder(int n) {
-		if (n >= nodeCount||n<0) {
+	void removeInorder(int n) 
+	{
+		// check of input
+		if (n >= nodeCount||n < 0) {
 			cout << "unsuccessful" << endl;
 			return;
 		}
@@ -234,7 +243,8 @@ public:
 		cout << "successful" << endl;
 	}
 
-	Node* removeInorderR(Node* node, int n, int &currCount) {
+	Node* removeInorderR(Node* node, int n, int &currCount) 
+	{
 		if (node == nullptr)
 			return node;
 		node->left = removeInorderR(node->left, n, currCount);
@@ -251,7 +261,8 @@ public:
 
 	}
 
-	void search(int val) {
+	void search(int val) 
+	{
 		if (nodeCount == 0) {
 			cout << "unsuccessful" << endl;
 			return;
@@ -260,8 +271,10 @@ public:
 			cout << "unsuccessful" << endl;
 	}
 
-	bool searchNode(int val, Node* node) {
-		//Search for student with specifed ID, return name
+	bool searchNode(int val, Node* node)
+	{
+		// Search for student with specifed ID, prints name
+		// Returns false if ID isn't found
 		if (node == nullptr)
 			return false;
 		if (node->val == val) {
@@ -272,7 +285,8 @@ public:
 	}
 
 
-	void search(string name) {
+	void search(string name) 
+	{
 		if (nodeCount == 0) {
 			cout << "unsuccessful" << endl;
 			return;
@@ -288,7 +302,8 @@ public:
 		}
 			
 	}
-	void searchName(string n, Node* node,vector<string> &s) {
+	void searchName(string n, Node* node,vector<string> &s) 
+	{
 		if (node == nullptr) {
 			return;
 		}
@@ -299,20 +314,26 @@ public:
 	    searchName(n, node->right,s);
 	}
 
-	string printID(int id) {
+	string printID(int id) 
+	{
 		string r = to_string(id);
 		while (r.length() < 8) {
 			r = "0" + r;
 		}
 		return r;
 	}
-	void printLevelCount() {
+	void printLevelCount() 
+	{
 		cout << height(root) << endl;
 	}
-
+	bool checkAVL() 
+	{
+		return checkAVL(root);
+	}
 	bool checkAVL(Node* root) {
-		//From my Stepik, checks if tree is AVL
-		//https://stepik.org/submissions/1590562?unit=400654
+		// From my Stepik, checks if tree is AVL
+		// https://stepik.org/submissions/1590562?unit=400654
+		// Helper function for me to check
 		if (root == nullptr)
 			return true;
 		if (abs(height(root->left) - height(root->right)) > 1)
@@ -321,16 +342,16 @@ public:
 	}
 	int height(Node* root)
 	{
-		//From Stepik Code
-		//https://stepik.org/submissions/1590562?unit=400654
+		// From my Stepik Code, recursive height function
+		// https://stepik.org/submissions/1590562?unit=400654
 		if (root == nullptr)
 			return 0;
 		return 1 + max(height(root->left), height(root->right));
 	}
 
-	//Rotate Methods from Stepik
-	//https://stepik.org/submissions/1480367?unit=379728
-	//https://stepik.org/submissions/1480369?unit=379728
+	// Rotate Methods initially coded in Stepik
+	// https://stepik.org/submissions/1480367?unit=379728
+	// https://stepik.org/submissions/1480369?unit=379728
 	Node* rotateLeft(Node* node)
 	{
 		Node* grandChild = node->right->left;
@@ -340,7 +361,6 @@ public:
 		node->height = height(node);
 		return newParent;
 	}
-
 	Node* rotateRight(Node* node)
 	{
 		Node* grandChild = node->left->right;
@@ -350,7 +370,6 @@ public:
 		node->height = height(node);
 		return newParent;
 	}
-
 	Node* rotateLeftRight(Node* node)
 	{
 		node->left = rotateLeft(node->left);
@@ -397,21 +416,37 @@ int main()
 			par1++;
 			auto par2 = line.find("\"",par1);
 			string name = line.substr(par1, par2 - par1);
+
+			// Checks to make sure name is a valid input (no numbers)
+			bool valid = true;
+			for (unsigned int i = 0; i < name.size(); i++) {
+				if (!isalpha(name[i]) && !(name[i]==' ')) {
+					valid = false;
+					break;
+				}
+			}
 			par2 += 2;
 			string num = line.substr(par2);
-			bool flag = true;
+			
+			// Checks to make sure input is a 8 digit number
 			if (num.size() != 8)
-				flag = false;
+				valid = false;
+			for (unsigned int i = 0; i < num.length(); i++) {
+				if (!isdigit(num[i])) {
+					valid = false;
+					break;
+				}
+			}
 
 			int idNum;
 			try {
 				idNum = stoi(num);
 			}
 			catch (exception) {
-				flag = false;
+				valid = false;
 			}
 			
-			if (flag) {
+			if (valid) {
 				ID.insert(name, idNum);
 			}
 			else
@@ -421,8 +456,17 @@ int main()
 		else if (command.compare("remove") == 0) {
 			pos1++;
 			string num = line.substr(pos1);
-			if (num.size() != 8)
+			// Checks to make sure input is a 8 digit number
+			bool valid = true;
+			for (unsigned int i = 0; i < num.length(); i++) {
+				if (!isdigit(num[i])) {
+					valid = false;
+					break;
+				}
+			}
+			if (num.size() != 8|| !(valid))
 				cout << "unsuccessful" << endl;
+
 			else {
 				int idNum = stoi(num);
 				ID.remove(idNum);
@@ -435,18 +479,38 @@ int main()
 				par1++;
 				auto par2 = line.find("\"", par1);
 				string name = line.substr(par1, par2 - par1);
-				ID.search(name);
+				
+				// Checks to make sure name contains no numbers
+				bool validName = true;
+				for (unsigned int i = 0; i < name.size(); i++) {
+					if (!isalpha(name[i]) && !(name[i] == ' ')) {
+						validName = false;
+					}
+				}
+				if (validName)
+					ID.search(name);
+				else
+					cout << "unsuccessful" << endl;
 			}
 			else {
 				pos1++;
-				string numID = line.substr(pos1);
+				string num = line.substr(pos1);
 				int idNum;
-				if (numID.size() != 8) {
+				
+				// Checks to see if number is all digits
+				bool valid = true;
+				for (unsigned int i = 0; i < num.length(); i++) {
+					if (!isdigit(num[i])) {
+						valid = false;
+						break;
+					}
+				}
+				if (num.size() != 8 || !(valid) ) {
 					cout << "unsuccessful" << endl;
 				}
 				else {
 					try {
-						idNum = stoi(numID);
+						idNum = stoi(num);
 						ID.search(idNum);
 					}
 					catch (exception) {
@@ -470,23 +534,31 @@ int main()
 		}
 		else if (command.compare("removeInorder") == 0) {
 			pos1++;
-			string numID = line.substr(pos1);
+			string num = line.substr(pos1);
 			int idNum;
+
+			// Checks if ID is all digits
+			bool valid = true;
+			for (unsigned int i = 0; i < num.length(); i++) {
+				if (!isdigit(num[i])) {
+					valid = false;
+					break;
+				}
+			}
 			try {
-				idNum = stoi(numID);
-				ID.removeInorder(idNum);
+				idNum = stoi(num);
+				if (valid)
+					ID.removeInorder(idNum);
+				else
+					cout << "unsuccessful" << endl;
 			}
 			catch (exception) {
 				cout << "unsuccessful" << endl;
 			}
-			
 		}
 		else {
 			cout << "unsuccessful" << endl;
 		}
-
 	}
-	
-	
 	return 0;
 }
