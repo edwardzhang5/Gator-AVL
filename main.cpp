@@ -40,8 +40,12 @@ public:
 	}
 
 	void printInorder() {
-		string s = printInorderR(root);
-		cout << s.substr(2)<<endl;
+		if (nodeCount != 0) {
+			string s = printInorderR(root);
+			cout << s.substr(2) << endl;
+		}
+		else
+			cout << "unsuccessful" << endl;
 	}
 	string printInorderR(Node* node) {
 		//Stepik Code
@@ -60,7 +64,7 @@ public:
 		string temp;
 		if (node == nullptr)
 			return "";
-		temp = ", " + node->name+ printInorderR(node->left) +  printInorderR(node->right);
+		temp = ", " + node->name+ printPreorderR(node->left) +  printPreorderR(node->right);
 		return temp;
 	}
 	void printPostorder() {
@@ -72,7 +76,7 @@ public:
 		string temp;
 		if (node == nullptr)
 			return "";
-		temp =  printInorderR(node->left) + printInorderR(node->right) + ", " + node->name;
+		temp =  printPostorderR(node->left) + printPostorderR(node->right) + ", " + node->name;
 		return temp;
 	}
 
@@ -128,6 +132,7 @@ public:
 		if (root == nullptr) {
 			root = new Node(name, val);
 			root->height = 1;
+			cout << "successful" << endl;
 			return root;
 		}
 		if (val > root->val)
@@ -144,14 +149,7 @@ public:
 		return root;
 	}
 
-	bool checkAVL(Node* root) {
-		//From my Stepik, checks if tree is AVL
-		if (root == nullptr)
-			return true;
-		if (abs(height(root->left) - height(root->right)) > 1)
-			return false;
-		return checkAVL(root->left) && checkAVL(root->right);
-	}
+	
 
 	void remove(int val) {
 		bool s = false;
@@ -162,8 +160,10 @@ public:
 		root = removeR(val, root, s);
 		if (!s)
 			cout << "unsuccessful" << endl;
-		else
+		else {
 			nodeCount--;
+			cout << "successful" << endl;
+		}
 
 	}
 	Node* removeR(int val, Node* node, bool &s) {
@@ -179,6 +179,7 @@ public:
 		}
 		else {
 			s = true;
+			
 			return deleteNode(node);
 		}
 		return node;
@@ -186,6 +187,7 @@ public:
 	}
 	
 	Node* deleteNode(Node* node) {
+		//cout << "successful" << endl;
 		if (node->left == nullptr && node->right == nullptr) {
 			//Child node
 			delete node;
@@ -229,6 +231,7 @@ public:
 		nodeCount--;
 		int counter = 0;
 		root = removeInorderR(root, n+1, counter);
+		cout << "successful" << endl;
 	}
 
 	Node* removeInorderR(Node* node, int n, int &currCount) {
@@ -243,6 +246,7 @@ public:
 			return node;
 		}
 		node->right = removeInorderR(node->right, n, currCount);
+		
 		return node;
 
 	}
@@ -276,7 +280,7 @@ public:
 		vector<string> IDMatch;
 		searchName(name, root, IDMatch);
 		if (IDMatch.empty())
-			cout << "unsuccessful";
+			cout << "unsuccessful" << endl;
 		else {
 			for (unsigned int i = 0; i < IDMatch.size(); i++) {
 				cout << IDMatch[i] << endl;
@@ -302,17 +306,31 @@ public:
 		}
 		return r;
 	}
+	void printLevelCount() {
+		cout << height(root) << endl;
+	}
 
-
+	bool checkAVL(Node* root) {
+		//From my Stepik, checks if tree is AVL
+		//https://stepik.org/submissions/1590562?unit=400654
+		if (root == nullptr)
+			return true;
+		if (abs(height(root->left) - height(root->right)) > 1)
+			return false;
+		return checkAVL(root->left) && checkAVL(root->right);
+	}
 	int height(Node* root)
 	{
 		//From Stepik Code
+		//https://stepik.org/submissions/1590562?unit=400654
 		if (root == nullptr)
 			return 0;
 		return 1 + max(height(root->left), height(root->right));
 	}
 
 	//Rotate Methods from Stepik
+	//https://stepik.org/submissions/1480367?unit=379728
+	//https://stepik.org/submissions/1480369?unit=379728
 	Node* rotateLeft(Node* node)
 	{
 		Node* grandChild = node->right->left;
@@ -345,9 +363,7 @@ public:
 		node->height = height(node);
 		return rotateLeft(node);
 	}
-	void printLevelCount() {
-		cout<<height(root)<<endl;
-	}
+
 
 private:
 	Node* root;
@@ -358,31 +374,7 @@ int main()
 {
 	//Initializes AVL
 	AVL ID;
-	/*
-	ID.insert("dad", 1);
-	ID.insert("ed", 2);
 	
-	ID.insert("tay", 3);
-	ID.insert("daddy", 4);
-	ID.insert("test", 5);
-	ID.insert("dad", 6);
-	
-	ID.insert("Tay", 7);
-	ID.insert("Ed", 8);
-	ID.insert("die", 9);
-	ID.insert("omega", 10);
-	ID.insert("omega", 11);
-	ID.insert("omega", 12);
-	ID.insert("omega", 13);
-	
-	ID.removeInorder(2);
-	//ID.search("lol");
-
-	ID.printLevelCount();
-	
-	ID.printPostorder();
-	*/
-
 	string line;
 	int count;
 	getline(cin, line);
@@ -395,6 +387,7 @@ int main()
 	}
 	
 	for (int i = 0; i < count; i++) {
+		//ID.printInorder();
 		getline(cin, line);
 		auto pos1 = line.find(" ");
 		string command = line.substr(0, pos1);
@@ -436,23 +429,31 @@ int main()
 			}
 		}
 		else if (command.compare("search") == 0) {
-			pos1++;
-			string numID = line.substr(pos1);
-			int idNum;
-			bool flag = true;
-			if (numID.size() != 8) {
-				flag = false;
+			
+			if (line.find("\"") != string::npos) {
+				auto par1 = line.find("\"");
+				par1++;
+				auto par2 = line.find("\"", par1);
+				string name = line.substr(par1, par2 - par1);
+				ID.search(name);
 			}
-			try {
-				if (flag) {
-					idNum = stoi(numID);
-					ID.search(idNum);
+			else {
+				pos1++;
+				string numID = line.substr(pos1);
+				int idNum;
+				if (numID.size() != 8) {
+					cout << "unsuccessful" << endl;
 				}
-				else
-					ID.search(numID);
-			}
-			catch (exception) {
-				ID.search(numID);
+				else {
+					try {
+						idNum = stoi(numID);
+						ID.search(idNum);
+					}
+					catch (exception) {
+						cout<<"unsuccessful"<<endl;
+					}
+					
+				}
 			}
 		}
 		else if (command.compare("printInorder") == 0) {
