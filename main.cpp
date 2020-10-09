@@ -7,6 +7,7 @@ Purpose: This project creates an AVL data structure to balance GatorIds
 
 #include <iostream>
 #include <string>
+#include <exception>
 #include <vector>
 using namespace std;
 
@@ -155,6 +156,7 @@ public:
 	void remove(int val) {
 		bool s = false;
 		if (nodeCount == 0) {
+			cout << "unsuccessful" << endl;
 			return;
 		}
 		root = removeR(val, root, s);
@@ -246,6 +248,10 @@ public:
 	}
 
 	void search(int val) {
+		if (nodeCount == 0) {
+			cout << "unsuccessful" << endl;
+			return;
+		}
 		if (!searchNode(val, root))
 			cout << "unsuccessful" << endl;
 	}
@@ -263,6 +269,10 @@ public:
 
 
 	void search(string name) {
+		if (nodeCount == 0) {
+			cout << "unsuccessful" << endl;
+			return;
+		}
 		vector<string> IDMatch;
 		searchName(name, root, IDMatch);
 		if (IDMatch.empty())
@@ -348,6 +358,7 @@ int main()
 {
 	//Initializes AVL
 	AVL ID;
+	/*
 	ID.insert("dad", 1);
 	ID.insert("ed", 2);
 	
@@ -369,23 +380,112 @@ int main()
 
 	ID.printLevelCount();
 	
-	ID.printInorder();
+	ID.printPostorder();
+	*/
 
-	
-	int count;
-	cin >> count;
 	string line;
-	/*
-	for (unsigned int i = 0; i < count; i++) {
+	int count;
+	getline(cin, line);
+	try {
+		count = stoi(line);
+	}
+	catch (exception) {
+		cout << "Fatal Error" << endl;
+		return 0;
+	}
+	
+	for (int i = 0; i < count; i++) {
 		getline(cin, line);
-		stringstream s(line);
-		string word;
-		while (s >> word) {
+		auto pos1 = line.find(" ");
+		string command = line.substr(0, pos1);
 
+		if (command.compare("insert") == 0) {
+			auto par1 = line.find("\"");
+			par1++;
+			auto par2 = line.find("\"",par1);
+			string name = line.substr(par1, par2 - par1);
+			par2 += 2;
+			string num = line.substr(par2);
+			bool flag = true;
+			if (num.size() != 8)
+				flag = false;
+
+			int idNum;
+			try {
+				idNum = stoi(num);
+			}
+			catch (exception) {
+				flag = false;
+			}
+			
+			if (flag) {
+				ID.insert(name, idNum);
+			}
+			else
+				cout << "unsuccessful" << endl;
+
+		}
+		else if (command.compare("remove") == 0) {
+			pos1++;
+			string num = line.substr(pos1);
+			if (num.size() != 8)
+				cout << "unsuccessful" << endl;
+			else {
+				int idNum = stoi(num);
+				ID.remove(idNum);
+			}
+		}
+		else if (command.compare("search") == 0) {
+			pos1++;
+			string numID = line.substr(pos1);
+			int idNum;
+			bool flag = true;
+			if (numID.size() != 8) {
+				flag = false;
+			}
+			try {
+				if (flag) {
+					idNum = stoi(numID);
+					ID.search(idNum);
+				}
+				else
+					ID.search(numID);
+			}
+			catch (exception) {
+				ID.search(numID);
+			}
+		}
+		else if (command.compare("printInorder") == 0) {
+			ID.printInorder();
+		}
+		else if (command.compare("printPreorder") == 0) {
+			ID.printPreorder();
+		}
+		else if (command.compare("printPostorder") == 0) {
+			ID.printPostorder();
+		}
+		else if (command.compare("printLevelCount") == 0) {
+			ID.printLevelCount();
+		}
+		else if (command.compare("removeInorder") == 0) {
+			pos1++;
+			string numID = line.substr(pos1);
+			int idNum;
+			try {
+				idNum = stoi(numID);
+				ID.removeInorder(idNum);
+			}
+			catch (exception) {
+				cout << "unsuccessful" << endl;
+			}
+			
+		}
+		else {
+			cout << "unsuccessful" << endl;
 		}
 
 	}
-	*/
+	
 	
 	return 0;
 }
